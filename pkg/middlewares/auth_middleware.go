@@ -38,6 +38,7 @@ func AuthMiddleware(authService *services.AuthService) gin.HandlerFunc {
 				"error":  "Votre session a expiré",
 				"status": http.StatusUnauthorized,
 			})
+			return
 		}
 
 		c.Set("userID", jwtClaims.UserID)
