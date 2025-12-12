@@ -14,18 +14,22 @@ type JWTClaims struct {
 }
 
 var jwtSecret []byte
+var RefreshTokenSecret []byte
 
-func InitializeJWTSecret(secret string) {
+func InitializeJWTSecret(secret string, refreshSecret string) {
 	jwtSecret = []byte(secret)
+	RefreshTokenSecret = []byte(refreshSecret)
 }
 
-func GenerateToken(userID uint, email string) (string, error) {
+func GenerateAccessToken(userID uint, email string) (string, error) {
+	location, _ := time.LoadLocation("Africa/Ouagadougou")
+	expireAt := time.Now().Add(15 * time.Minute).In(location)
 	claims := JWTClaims{
 		UserID: userID,
 		Email:  email,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 72)),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ExpiresAt: jwt.NewNumericDate(expireAt),
+			IssuedAt:  jwt.NewNumericDate(time.Now().In(location)),
 		},
 	}
 
@@ -34,7 +38,7 @@ func GenerateToken(userID uint, email string) (string, error) {
 	return token.SignedString(jwtSecret)
 }
 
-func ValidateToken(tokenString string) (*JWTClaims, error) {
+func ValidateAccessToken(tokenString string) (*JWTClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &JWTClaims{}, func(token *jwt.Token) (any, error) {
 		return []byte(jwtSecret), nil
 	})
@@ -48,4 +52,24 @@ func ValidateToken(tokenString string) (*JWTClaims, error) {
 	}
 
 	return nil, errors.New("token invalide")
+}
+
+func GenerateRefreshToken(userID uint, email string) (string, *time.Time, error) {
+	location, _ := time.LoadLocation("Africa/Ouagadougou")
+
+	expireAt := time.Now().Add(30 * 25 * time.Hour).In(location)
+
+	claims := JWTClaims{
+		UserID: userID,
+		Email:  email,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expireAt),
+			IssuedAt:  jwt.NewNumericDate(time.Now().In(location)),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenStr, err := token.SignedString(RefreshTokenSecret)
+
+	return tokenStr, &expireAt, err
 }
