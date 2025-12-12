@@ -57,7 +57,7 @@ func ValidateAccessToken(tokenString string) (*JWTClaims, error) {
 func GenerateRefreshToken(userID uint, email string) (string, *time.Time, error) {
 	location, _ := time.LoadLocation("Africa/Ouagadougou")
 
-	expireAt := time.Now().Add(30 * 25 * time.Hour).In(location)
+	expireAt := time.Now().Add(30 * 24 * time.Hour).In(location)
 
 	claims := JWTClaims{
 		UserID: userID,

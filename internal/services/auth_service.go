@@ -123,10 +123,6 @@ func (s *AuthService) NouveauRefreshToken(refreshToken string) (string, string, 
 		return "", "", fmt.Errorf("une erreur est survenue lors de la génération du refresh token")
 	}
 
-	// s.refreshTokenRepo.Update(uint(ancienRT.ID), map[string]any{
-	// 	"revoked_at": maintenat,
-	// })
-
 	s.refreshTokenRepo.Delete(uint(ancienRT.ID))
 
 	token := &models.RefreshToken{

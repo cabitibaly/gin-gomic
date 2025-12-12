@@ -28,10 +28,6 @@ func (r *RefreshTokenRepository) FindByToken(token string) (*models.RefreshToken
 	return &RefreshToken, nil
 }
 
-func (r *RefreshTokenRepository) Update(id uint, data map[string]any) error {
-	return r.db.Model(&models.RefreshToken{}).Updates(data).Error
-}
-
 func (r *RefreshTokenRepository) Delete(id uint) error {
 	return r.db.Delete(&models.RefreshToken{}, id).Error
 }
