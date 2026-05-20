@@ -54,7 +54,7 @@ func Migration() error {
 	err := DB.AutoMigrate(
 		&models.User{},
 		&models.Post{},
-		&models.Jwt{},
+		&models.RefreshToken{},
 	)
 
 	if err != nil {

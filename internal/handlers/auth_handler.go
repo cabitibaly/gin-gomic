@@ -61,28 +61,50 @@ func (h *AuthHandler) LoginUserHandler(c *gin.Context) {
 		return
 	}
 
-	user, token, err := h.service.LoginUser(data.Email, data.Password)
+	user, refreshToken, accessToken, err := h.service.LoginUser(data.Email, data.Password)
 
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":  err.Error(),
-			"status": http.StatusUnauthorized,
+			"status": http.StatusInternalServerError,
 		})
 		return
 	}
 
-	c.SetCookie(
-		"jwt",
-		token,
-		3600*24*3,
-		"/",
-		"",
-		false,
-		true,
-	)
+	c.JSON(http.StatusOK, gin.H{
+		"user":          user,
+		"refresh_token": refreshToken,
+		"access_token":  accessToken,
+		"status":        http.StatusOK,
+	})
+}
+
+func (h *AuthHandler) RefreshTokenHandler(c *gin.Context) {
+	var data struct {
+		Token string `json:"token"`
+	}
+
+	if err := c.ShouldBindJSON((&data)); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":  err.Error(),
+			"status": http.StatusBadRequest,
+		})
+		return
+	}
+
+	refreshToken, accessToken, err := h.service.NouveauRefreshToken(data.Token)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":  err.Error(),
+			"status": http.StatusInternalServerError,
+		})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"user":   user,
-		"status": http.StatusOK,
+		"refresh_token": refreshToken,
+		"access_token":  accessToken,
+		"status":        http.StatusOK,
 	})
+
 }

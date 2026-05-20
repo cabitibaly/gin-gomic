@@ -18,6 +18,7 @@ func UserRoutes(
 	{
 		auth.POST("/register", authHandler.RegisterUserHandler)
 		auth.POST("/login", authHandler.LoginUserHandler)
+		auth.POST("/refresh-token", authHandler.RefreshTokenHandler)
 	}
 
 	users := r.Group("/users")

@@ -14,7 +14,7 @@ import (
 func main() {
 
 	cfg := config.LoadConfig()
-	utils.InitializeJWTSecret(cfg.JWTSecret)
+	utils.InitializeJWTSecret(cfg.JWTSecret, cfg.RefreshTokenSecret)
 
 	if err := database.Connect(cfg); err != nil {
 		panic(err)
@@ -30,7 +30,7 @@ func main() {
 	userService := services.NewUserService(userRepo)
 	userHandler := handlers.NewUserHandler(userService)
 
-	authRepo := repositories.NewJWTRepository(db)
+	authRepo := repositories.NewRefreshTokenRepository(db)
 	authService := services.NewAuthService(authRepo, userRepo)
 	authHandler := handlers.NewAuthHandler(authService)
 

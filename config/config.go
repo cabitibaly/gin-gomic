@@ -7,12 +7,13 @@ import (
 )
 
 type Config struct {
-	DBUser     string
-	DBPassword string
-	DBName     string
-	DBHost     string
-	DBPort     string
-	JWTSecret  string
+	DBUser             string
+	DBPassword         string
+	DBName             string
+	DBHost             string
+	DBPort             string
+	JWTSecret          string
+	RefreshTokenSecret string
 }
 
 func getEnv(key, defaultValue string) string {
@@ -31,11 +32,12 @@ func LoadConfig() *Config {
 	}
 
 	return &Config{
-		DBUser:     getEnv("DB_USER", "root"),
-		DBPassword: getEnv("DB_PASSWORD", ""),
-		DBName:     getEnv("DB_NAME", "test"),
-		DBHost:     getEnv("DB_HOST", "localhost"),
-		DBPort:     getEnv("DB_PORT", "3312"),
-		JWTSecret:  getEnv("JWT_SECRET", ""),
+		DBUser:             getEnv("DB_USER", "root"),
+		DBPassword:         getEnv("DB_PASSWORD", ""),
+		DBName:             getEnv("DB_NAME", "test"),
+		DBHost:             getEnv("DB_HOST", "localhost"),
+		DBPort:             getEnv("DB_PORT", "3312"),
+		JWTSecret:          getEnv("JWT_SECRET", ""),
+		RefreshTokenSecret: getEnv("REFRESH_TOKEN_SECRET", ""),
 	}
 }
